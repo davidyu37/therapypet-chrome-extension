@@ -1,3 +1,49 @@
+const { getSentimentAnalysis } = require('./deepai')
+const { getRandomCat } = require('./cat.js');
+
+const hasElement = (array1: [], array2: string[]) => {
+  return array1.some(element => {
+    if (array2.includes(element)) {
+      return true;
+    }
+    return false;
+  });
+}
+
+const notifyUser = async () => {
+  const data = await getRandomCat();
+
+  if(data && data[0]) {
+    const sendToBackground = {
+      from: 'therapy-pet-content',
+      url: data[0].url
+    }
+  
+    chrome.runtime.sendMessage(sendToBackground, (response) => {
+      // Can do something once user come back
+    });
+  }
+}
+
+
+// Search function
+const search = async (text: string) => {
+  if(text) {
+    // Analyze text sentiment
+    const result = await getSentimentAnalysis(text)
+    if(result) {
+      // If sentiment is negative or very negative
+      const { output } = result;
+      const negativeSentiments = ['Negative', 'Very Negative']
+
+      if(hasElement(output, negativeSentiments)) {
+        notifyUser()
+      }
+
+    }
+  }
+};
+
 const isTextareaOrInput = (element: Element | null) => {
   if (!element) {
     return false;
@@ -33,36 +79,63 @@ const listenActiveElement = (callback: any) => {
   window.addEventListener("focus", detectFocus, true);
 };
 
-const listenToTyping = (element: Element) => {
+const listenToTyping = (element: HTMLInputElement) => {
   let timer: any | null; // Timer identifier
-  const waitTime = 500; // Wait time in milliseconds
+  let activeTypingTimer: any | null; // Timer identifier
+  const waitTime = 3000; // Wait time in milliseconds
+  let lastInput = element.value
+  let activelyTyping = false
+  let lastTypeTime = new Date().getTime();
 
-  // Search function
-  const search = (text: string) => {
-    console.log('search content', text)
-    if(text) {
-      // Analyze text sentiment
+  element.addEventListener("keydown", (e) => {
+    activelyTyping = true;
+    lastTypeTime = new Date().getTime();
+  })
 
-    }
-  };
 
   // Listen for `keyup` event
   element.addEventListener("keyup", (e) => {
     const target = e.target as HTMLInputElement;
     const text = target.value;
-
+    
+    
     if(timer) {
       // Clear timer
       clearTimeout(timer);
     }
+    
+    if(activeTypingTimer) {
+      clearTimeout(activeTypingTimer);
+    }
+    
+    const activeTypingCheckTime = waitTime - 1000;
+
+    
+    activeTypingTimer = setTimeout(() => {
+      if(activelyTyping) {
+        const now = new Date().getTime();
+
+        console.log('keyup', now, lastTypeTime, activeTypingCheckTime)
+
+        if(now > lastTypeTime + activeTypingCheckTime) {
+          activelyTyping = false;
+        }
+      }
+    }, activeTypingCheckTime)
 
     // Wait for X ms and then process the request
     timer = setTimeout(() => {
-      search(text);
+      if(text !== lastInput) {
+        console.log('check input', activelyTyping)
+        if(!activelyTyping) {
+          search(text);
+          lastInput = text;
+        }
+      }
     }, waitTime);
   });
 };
 
-listenActiveElement((element: Element) => {
+listenActiveElement((element: HTMLInputElement) => {
   listenToTyping(element);
 });
