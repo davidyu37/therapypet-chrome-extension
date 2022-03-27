@@ -1,5 +1,5 @@
-const { getSentimentAnalysis } = require('./deepai')
-const { getRandomCat } = require('./cat.js');
+const { getSentimentAnalysis } = require('./lib/deepai')
+const { getRandomCat } = require('./lib/cat.js');
 
 const hasElement = (array1: [], array2: string[]) => {
   return array1.some(element => {

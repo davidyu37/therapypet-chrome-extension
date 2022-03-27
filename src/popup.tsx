@@ -4,8 +4,8 @@ import ReactDOM from "react-dom";
 const Popup = () => {
   return (
     <>
-      <div style={{display: 'flex', padding: 40, justifyContent: 'center', alignItems: 'center'}}>
-        Cheer up!
+      <div style={{ padding: 20, width: 120, fontSize: 16, textAlign: 'center' }}>
+        Cheer up!😁
       </div>
     </>
   );

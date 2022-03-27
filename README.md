@@ -1,4 +1,4 @@
-# Chrome Extension TypeScript Starter
+# TherapyPet
 
 ![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
 
@@ -18,12 +18,6 @@ Chrome Extension, TypeScript and Visual Studio Code
 * Webpack
 * React
 * Jest
-* Example Code
-    * Chrome Storage
-    * Options Version 2
-    * content script
-    * count up badge number
-    * background
 
 ## Project Structure
 
@@ -38,14 +32,15 @@ Chrome Extension, TypeScript and Visual Studio Code
 npm install
 ```
 
-## Import as Visual Studio Code project
+## Config
+Add `config.js` within `/src`
 
-...
-
-## Build
-
+Example
 ```
-npm run build
+export default {
+    DEEPAI_API_KEY: 'YOUR_KEY_HERE',
+    CAT_API: 'YOUR_KEY_HERE'
+}
 ```
 
 ## Build in watch mode
@@ -56,15 +51,11 @@ npm run build
 npm run watch
 ```
 
-### Visual Studio Code
+## Add `/dist` folder to chrome
+## Build
 
-Run watch mode.
-
-type `Ctrl + Shift + B`
-
-## Load extension to chrome
-
-Load `dist` directory
-
+```
+npm run build
+```
 ## Test
 `npx jest` or `npm run test`
