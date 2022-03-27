@@ -55,6 +55,13 @@ const isTextareaOrInput = (element: Element | null) => {
     return true;
   }
 
+  // Check if content is editable
+  const isContentEditable = element.getAttribute('contenteditable');
+
+  if(isContentEditable) {
+    return true;
+  }
+
   return false;
 };
 
@@ -96,8 +103,13 @@ const listenToTyping = (element: HTMLInputElement) => {
   // Listen for `keyup` event
   element.addEventListener("keyup", (e) => {
     const target = e.target as HTMLInputElement;
-    const text = target.value;
-    
+
+    let text = target.value;
+
+    // If text is undefined, the element is a editable div
+    if(text === undefined) {
+      text = target.innerText;
+    }
     
     if(timer) {
       // Clear timer
@@ -115,8 +127,6 @@ const listenToTyping = (element: HTMLInputElement) => {
       if(activelyTyping) {
         const now = new Date().getTime();
 
-        console.log('keyup', now, lastTypeTime, activeTypingCheckTime)
-
         if(now > lastTypeTime + activeTypingCheckTime) {
           activelyTyping = false;
         }
@@ -126,7 +136,6 @@ const listenToTyping = (element: HTMLInputElement) => {
     // Wait for X ms and then process the request
     timer = setTimeout(() => {
       if(text !== lastInput) {
-        console.log('check input', activelyTyping)
         if(!activelyTyping) {
           search(text);
           lastInput = text;
