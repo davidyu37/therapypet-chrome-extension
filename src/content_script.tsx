@@ -28,10 +28,12 @@ const notifyUser = async () => {
 
 // Search function
 const search = async (text: string) => {
+  console.log('search', text)
   if(text) {
     // Analyze text sentiment
     const result = await getSentimentAnalysis(text)
     if(result) {
+      console.log('sentiment result', result)
       // If sentiment is negative or very negative
       const { output } = result;
       const negativeSentiments = ['Negative', 'Very Negative']
@@ -110,6 +112,8 @@ const listenToTyping = (element: HTMLInputElement) => {
     if(text === undefined) {
       text = target.innerText;
     }
+
+    console.log('key up', text)
     
     if(timer) {
       // Clear timer
