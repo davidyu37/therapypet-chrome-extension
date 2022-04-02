@@ -1,4 +1,5 @@
-const { getSentimentAnalysis } = require('./lib/deepai')
+// const { getSentimentAnalysis } = require('./lib/deepai')
+const { getSentimentAnalysis } = require('./lib/sentimentserver')
 const { getRandomCat } = require('./lib/cat.js');
 
 const hasElement = (array1: [], array2: string[]) => {
@@ -33,12 +34,9 @@ const search = async (text: string) => {
     // Analyze text sentiment
     const result = await getSentimentAnalysis(text)
     if(result) {
-      console.log('sentiment result', result)
-      // If sentiment is negative or very negative
-      const { output } = result;
-      const negativeSentiments = ['Negative', 'Very Negative']
+      const { sentiment, score, text } = result;
 
-      if(hasElement(output, negativeSentiments)) {
+      if(sentiment === 'negative') {
         notifyUser()
       }
 
@@ -112,8 +110,6 @@ const listenToTyping = (element: HTMLInputElement) => {
     if(text === undefined) {
       text = target.innerText;
     }
-
-    console.log('key up', text)
     
     if(timer) {
       // Clear timer
